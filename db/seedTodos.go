@@ -16,7 +16,7 @@ func seedTodos() {
 }
 
 func dumpTodos(todos *[]models.Todo) {
-	stmt, err := DB.Prepare("INSERT INTO todos (user_id, title, completed) VALUES (?, ?, ?)")
+	stmt, err := DB.Prepare("INSERT INTO todos (user_id, title, completed) VALUES ($1, $2, $3)")
 	if err != nil {
 		fmt.Print("Failed to prepare")
 		return
@@ -31,12 +31,11 @@ func dumpTodos(todos *[]models.Todo) {
 	}
 
 	for _, todo := range *todos {
-		fmt.Println("todo", todo.UserId, todo.Title, todo.Completed)
 		tx.Stmt(stmt).Exec(todo.UserId, todo.Title, todo.Completed)
 	}
 	err = tx.Commit()
 	if err != nil {
-		fmt.Println("Failed to commit ")
+		fmt.Println("Failed to commit tod", err.Error())
 		return
 	}
 }

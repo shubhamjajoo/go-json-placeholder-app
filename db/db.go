@@ -10,41 +10,23 @@ import (
 
 var DB *sql.DB
 
-func InitDB() {
+func InitDBB(dbname string) {
 	var err error
-	DB, err = sql.Open("sqlite3", "./db/databse.db")
-	if err != nil {
-		fmt.Println("Could not connect to DB")
-		return
+	if dbname == "postgres" {
+		DB, err = sql.Open("postgres", "user=postgres dbname=postgres sslmode=disable password=admin host=localhost port=5432")
+		if err != nil {
+			fmt.Println("Could not connect to DB", err.Error())
+			return
+		}
 	}
 	DB.SetMaxOpenConns(10)
 	DB.SetMaxIdleConns(5)
 	createTable()
 	seedUsers()
 	seedTodos()
-
-}
-func InitDBB() {
-	var err error
-	DB, err = sql.Open("postgres", "user=postgres dbname=postgres sslmode=disable password=admin host=localhost port=5432")
-	if err != nil {
-		fmt.Println("Could not connect to DB", err.Error())
-		return
-	}
-	fmt.Println("Connected to Postgres DB")
-	DB.SetMaxOpenConns(10)
-	DB.SetMaxIdleConns(5)
-	createTable()
-	seedUsers()
-	// seedTodos()
 }
 
 func createTable() {
-	// createUsersTable := `CREATE TABLE  IF NOT EXISTS users (
-	// 	id INTEGER PRIMARY KEY  AUTOINCREMENT,
-	// 	name TEXT NOT NULL,
-	// 	username TEXT NOT NULL UNIQUE
-	// )`
 	createUsersTable := `CREATE TABLE  IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
 		name TEXT NOT NULL,
@@ -55,13 +37,7 @@ func createTable() {
 		fmt.Println(err.Error())
 		panic("failed to  create user table")
 	}
-	// createTodoTable := `CREATE TABLE  IF NOT EXISTS todos (
-	// 	id INTEGER PRIMARY KEY  AUTOINCREMENT,
-	// 	title TEXT NOT NULL,
-	// 	completed INTEGER,
-	// 	user_id INTEGER,
-	// 	FOREIGN KEY(user_id) REFERENCES users(id)
-	// )`
+
 	createTodoTable := `CREATE TABLE  IF NOT EXISTS todos (
 		id SERIAL PRIMARY KEY,
 		title TEXT NOT NULL,

@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	db.InitDBB()
+	db.InitDBB("postgres")
 	server := gin.Default()
 	routes.InitRoutes(server)
 	server.Run()
